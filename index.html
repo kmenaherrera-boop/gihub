@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Votación de Contexto, Partes Interesadas y FODA · Tecknologistic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#C4191F; --red-deep:#8C1116; --ink:#2B2D33; --muted:#5F6370; --line:#D9DBE0;
+  --paper:#FFFFFF; --soft:#F4F4F6; --plate:#FFFFFF; --on-red:#FFFFFF; --ok:#1F7A4D; --okbg:#E6F3EC; --bad:#B42318; --badbg:#FDECEA;
+  color-scheme:light; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --red:#E0444A; --red-deep:#F08A8D; --ink:#ECEDF0; --muted:#A9ADB7; --line:#3A3D45;
+    --paper:#1C1D21; --soft:#26282E; --plate:#FFFFFF; --on-red:#FFFFFF; --ok:#5CC98E; --okbg:#1E3328; --bad:#F2877F; --badbg:#3A2321; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --red:#E0444A; --red-deep:#F08A8D; --ink:#ECEDF0; --muted:#A9ADB7; --line:#3A3D45;
+  --paper:#1C1D21; --soft:#26282E; --plate:#FFFFFF; --on-red:#FFFFFF; --ok:#5CC98E; --okbg:#1E3328; --bad:#F2877F; --badbg:#3A2321; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px);scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Barlow",Arial,Helvetica,sans-serif;font-size:16px;line-height:1.55}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--red);outline-offset:2px;border-radius:4px}
+.cond{font-family:"Barlow Condensed","Arial Narrow",Arial,sans-serif}
+
+/* Encabezado SGC */
+.ctrl{max-width:1180px;margin:20px auto 0;padding:0 20px}
+.ctrl-grid{display:grid;grid-template-columns:190px 1fr 200px;border:2px solid var(--ink)}
+.ctrl-grid>div{padding:12px 16px}
+.logo{background:var(--plate);display:flex;align-items:center;justify-content:center;border-right:2px solid var(--ink)}
+.logo img{max-width:100%;height:auto;display:block}
+.mid{border-right:2px solid var(--ink);display:flex;flex-direction:column;justify-content:center}
+.sys{font-weight:700;font-size:15px;color:var(--red)}
+.mid h1{font-weight:700;font-size:clamp(22px,2.8vw,30px);line-height:1.12;margin:2px 0 0}
+.meta{display:grid;gap:4px;font-size:14px;align-content:center}
+.meta b{font-weight:600}
+
+/* Barra de pestañas */
+.bar{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--line);margin-top:16px}
+.bar-in{max-width:1180px;margin:0 auto;padding:10px 20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--paper)}
+.tabs{display:flex;border:2px solid var(--ink);border-radius:8px;overflow:hidden}
+.tabs button{border:0;background:transparent;padding:8px 16px;font-weight:600;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--red);color:var(--on-red)}
+.spacer{flex:1}
+.btn{border:2px solid var(--ink);background:transparent;border-radius:8px;padding:7px 14px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--soft)}
+
+/* Diseño con índice lateral */
+.layout{max-width:1180px;margin:0 auto;padding:24px 20px 60px;display:grid;grid-template-columns:270px 1fr;gap:36px}
+nav.toc{position:sticky;top:76px;align-self:start;max-height:calc(100vh - 96px);overflow:auto}
+nav.toc h2{font-size:20px;margin:0 0 10px}
+nav.toc ol{list-style:none;margin:0;padding:0}
+nav.toc li a{display:flex;gap:10px;align-items:baseline;justify-content:space-between;text-decoration:none;padding:8px 10px;border-radius:6px;color:var(--ink)}
+nav.toc li a:hover{background:var(--soft)}
+nav.toc li a.active{background:var(--ink);color:var(--paper)}
+nav.toc li.sub a{padding-left:26px;font-size:15px}
+.badge{font-size:12px;font-weight:600;padding:1px 8px;border-radius:999px;white-space:nowrap;background:var(--soft);color:var(--muted)}
+.badge.ok{background:var(--okbg);color:var(--ok)}
+.badge.bad{background:var(--badbg);color:var(--bad)}
+nav.toc li a.active .badge{background:var(--paper);color:var(--ink)}
+.toc-note{font-size:13px;color:var(--muted);margin-top:14px}
+
+main section{margin-bottom:44px}
+main h2{font-size:28px;font-weight:700;margin:0 0 6px}
+main h3{font-size:22px;font-weight:700;margin:26px 0 6px}
+.lead{color:var(--muted);max-width:70ch;margin:0 0 14px}
+.panel{background:var(--soft);border-radius:10px;padding:18px 20px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label.f{display:grid;gap:4px;font-weight:600;font-size:14px}
+label.f select,label.f input{font-weight:400;font-size:16px;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--paper)}
+ol.rules{margin:12px 0 0;padding-left:22px}
+ol.rules li{margin:4px 0}
+
+.counter{position:sticky;top:64px;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:8px 14px;margin:10px 0}
+.counter .num{font-size:22px;font-weight:700}
+.counter.ok{border-color:var(--ok)} .counter.ok .num{color:var(--ok)}
+.counter.bad{border-color:var(--bad)} .counter.bad .num{color:var(--bad)}
+.msg{font-size:14px;color:var(--muted)}
+
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+th{font-size:13px;font-weight:600;color:var(--muted);background:var(--soft)}
+td.id{font-weight:700;width:58px;color:var(--red)}
+td.pick{width:110px;text-align:center}
+tr.on td{background:var(--okbg)}
+tr.dup td{background:var(--badbg)}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--red);cursor:pointer}
+td.pick select{padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);min-width:70px}
+
+.summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.summary .panel h4{margin:0 0 6px;font-size:16px}
+.summary .panel p{margin:0;font-size:15px}
+.check{list-style:none;padding:0;margin:0}
+.check li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line)}
+.check li:last-child{border-bottom:0}
+.check input{margin-top:3px;flex:none}
+.grid-ctrl td.pick{width:auto}
+footer{max-width:1180px;margin:0 auto;padding:16px 20px 30px;border-top:2px solid var(--ink);font-size:13px;color:var(--muted);font-style:italic}
+a.doclink{color:var(--red);font-weight:600}
+
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr}
+  nav.toc{position:static;max-height:none;border:1px solid var(--line);border-radius:10px;padding:12px}
+  .ctrl-grid{grid-template-columns:1fr}
+  .logo,.mid{border-right:0;border-bottom:2px solid var(--ink)}
+  .fields,.summary{grid-template-columns:1fr}
+}
+@media print{
+  .bar,nav.toc,.counter,body::before{display:none!important}
+  .layout{display:block;padding:0}
+  [hidden]{display:none!important}
+  section{break-inside:avoid-page}
+}
+</style>
+</head>
+<body>
+
+<header class="ctrl" aria-label="Encabezado del documento">
+  <div class="ctrl-grid">
+    <div class="logo"><img src="data:image/png;base64,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" alt="Tecknologistic" width="267" height="70"></div>
+    <div class="mid"><span class="sys cond">Sistema de Gestión Integrado</span><h1 class="cond">Votación de Contexto, Partes Interesadas y FODA</h1></div>
+    <div class="meta"><div><b>Código:</b> Por asignar</div><div><b>Versión:</b> 01</div><div><b>Fecha:</b> 10-2026</div><div><b>Norma:</b> ISO 9001:2015, cl. 4.1, 4.2 y 6.1</div></div>
+  </div>
+</header>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="tabs" role="tablist" aria-label="Documento">
+      <button role="tab" id="tab-p" aria-selected="true" aria-controls="doc-p">Participantes</button>
+      <button role="tab" id="tab-s" aria-selected="false" aria-controls="doc-s">Secretaria</button>
+    </div>
+    <span class="spacer"></span>
+    <button class="btn" id="btn-print">Imprimir</button>
+    <button class="btn" id="btn-clear">Limpiar planilla</button>
+  </div>
+</div>
+
+<div class="layout">
+  <nav class="toc" aria-label="Índice">
+    <h2 class="cond">Índice</h2>
+    <ol id="toc-list"></ol>
+    <p class="toc-note" id="toc-note"></p>
+  </nav>
+
+  <main>
+    <!-- ===================== PARTICIPANTES ===================== -->
+    <div id="doc-p" role="tabpanel" aria-labelledby="tab-p">
+      <section id="p-datos" data-toc="Datos del votante">
+        <h2 class="cond">Datos del votante</h2>
+        <p class="lead">Cada votante llena su planilla en silencio. El índice muestra en verde cada parte que ya está completa.</p>
+        <div class="panel">
+          <div class="fields">
+            <label class="f">Votante
+              <select id="votante">
+                <option value="">Elegir…</option>
+                <option>Gabriela Novillo · Presidenta y CFO</option>
+                <option>Jorge Montalvo · Gerente de Combustible</option>
+                <option>Paulina León · Coordinadora de Compras</option>
+                <option>Bethzabet Quijano · Coordinadora de Ventas</option>
+                <option>Katheryne Mena · Coordinadora QHSE</option>
+              </select>
+            </label>
+            <label class="f">Fecha <input type="date" id="fecha"></label>
+          </div>
+          <ol class="rules">
+            <li><b>Planillas 1 y 2:</b> marque exactamente 10 cuestiones y 6 partes interesadas. Cada marca vale 1 punto.</li>
+            <li><b>FODA:</b> en cada cuadrante asigne puntos solo a su top; el más importante recibe el puntaje mayor y el último recibe 1.</li>
+            <li>No repita puntajes dentro de un cuadrante y use todos los puntos.</li>
+            <li>El voto de Gabriela Novillo se escribe con puntos normales; el Excel lo duplica.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="p-41" data-toc="Planilla 1 · Cuestiones (4.1)" data-badge="b41">
+        <h2 class="cond">Planilla 1 · Cuestiones internas y externas</h2>
+        <p class="lead">Hoja 4.1. Marque las 10 cuestiones que más afectan la capacidad de cumplir con el cliente y con la calidad.</p>
+        <div class="counter" id="c41"><span class="msg">Cuestiones marcadas</span><span class="num">0 de 10</span></div>
+        <div class="tbl"><table><thead><tr><th>ID</th><th>Cuestión</th><th style="text-align:center">Marcar</th></tr></thead><tbody id="t41"></tbody></table></div>
+      </section>
+
+      <section id="p-42" data-toc="Planilla 2 · Partes interesadas (4.2)" data-badge="b42">
+        <h2 class="cond">Planilla 2 · Partes interesadas</h2>
+        <p class="lead">Hoja 4.2. Marque las 6 partes interesadas que más influyen en la calidad de nuestros productos y servicios.</p>
+        <div class="counter" id="c42"><span class="msg">Partes interesadas marcadas</span><span class="num">0 de 6</span></div>
+        <div class="tbl"><table><thead><tr><th>ID</th><th>Parte interesada</th><th style="text-align:center">Marcar</th></tr></thead><tbody id="t42"></tbody></table></div>
+      </section>
+
+      <section id="p-foda" data-toc="Planilla 3 · FODA">
+        <h2 class="cond">Planilla 3 · FODA</h2>
+        <p class="lead">Asigne los puntos de su top en cada cuadrante. Si repite un puntaje, la fila se marca en rojo.</p>
+        <div id="foda"></div>
+      </section>
+
+      <section id="p-resumen" data-toc="Resumen de mi voto">
+        <h2 class="cond">Resumen de mi voto</h2>
+        <p class="lead">Lo que la secretaria carga en el Excel. Revíselo antes de entregar.</p>
+        <div class="summary" id="summary"></div>
+      </section>
+    </div>
+
+    <!-- ===================== SECRETARIA ===================== -->
+    <div id="doc-s" role="tabpanel" aria-labelledby="tab-s" hidden>
+      <section id="s-antes" data-toc="Antes de la reunión">
+        <h2 class="cond">Antes de la reunión</h2>
+        <p class="lead">Todo listo antes de que llegue el primer votante.</p>
+        <div class="panel"><ul class="check">
+          <li><input type="checkbox" id="a1"><label for="a1">Imprimir 5 planillas o abrir esta página en el equipo de cada votante</label></li>
+          <li><input type="checkbox" id="a2"><label for="a2">Abrir el Excel de la matriz (v5) y guardar una copia de respaldo</label></li>
+          <li><input type="checkbox" id="a3"><label for="a3">Revisar en la hoja Listas el top 5, 5, 4 y 7 (C7 a C10) y el factor del jefe 2 (C5)</label></li>
+          <li><input type="checkbox" id="a4"><label for="a4">Revisar en la hoja FODA, fila 6, los nombres en las columnas H, I, J, K y T</label></li>
+          <li><input type="checkbox" id="a5"><label for="a5">Tener impresas las hojas de conteo de la guía</label></li>
+          <li><input type="checkbox" id="a6"><label for="a6">Preparar la lista de asistencia para firmar</label></li>
+        </ul></div>
+      </section>
+
+      <section id="s-durante" data-toc="Durante la votación">
+        <h2 class="cond">Durante la votación</h2>
+        <p class="lead">Orden: Planilla 1, Planilla 2 y luego el FODA, un cuadrante a la vez.</p>
+        <ol class="rules">
+          <li>Entregue la planilla y recuerde que se llena en silencio.</li>
+          <li>Al recibirla, revise que esté bien llena. Si algo no cuadra, devuélvala para que se corrija en ese momento.</li>
+          <li>Anote los votos en las hojas de conteo.</li>
+          <li>Cargue los votos en el Excel.</li>
+          <li>Al terminar cada cuadrante, revise la hoja Control votos: todas las columnas usadas deben decir OK.</li>
+          <li>No comente ni muestre los votos de nadie.</li>
+        </ol>
+      </section>
+
+      <section id="s-carga" data-toc="Dónde se carga cada planilla">
+        <h2 class="cond">Dónde se carga cada planilla</h2>
+        <p class="lead">Planillas 1 y 2: el total de marcas por fila. FODA: los puntos de cada votante en su columna.</p>
+        <div class="tbl"><table>
+          <thead><tr><th>Planilla</th><th>Hoja</th><th>Columna</th><th>Qué se escribe</th></tr></thead>
+          <tbody>
+            <tr><td>1 · Cuestiones</td><td>4.1 Contexto</td><td>N</td><td>Total de marcas; 0 si nadie la marcó</td></tr>
+            <tr><td>2 · Partes interesadas</td><td>4.2 Partes Interesadas</td><td>O</td><td>Total de marcas; 0 si nadie la marcó</td></tr>
+            <tr><td>FODA · Jorge Montalvo</td><td>FODA</td><td>H</td><td>Sus puntos</td></tr>
+            <tr><td>FODA · Paulina León</td><td>FODA</td><td>I</td><td>Sus puntos</td></tr>
+            <tr><td>FODA · Bethzabet Quijano</td><td>FODA</td><td>J</td><td>Sus puntos</td></tr>
+            <tr><td>FODA · Katheryne Mena</td><td>FODA</td><td>K</td><td>Sus puntos</td></tr>
+            <tr><td>FODA · Gabriela Novillo</td><td>FODA</td><td>T · Jefe</td><td>Sus puntos normales; el Excel los duplica</td></tr>
+          </tbody></table></div>
+        <p class="lead" style="margin-top:12px">Las hojas de conteo para imprimir están en la <a class="doclink" href="https://claude.ai/code/artifact/cfc8afa5-3471-43bd-baa1-c66bb8232a9f" target="_blank" rel="noopener">Guía de la secretaria</a>.</p>
+      </section>
+
+      <section id="s-control" data-toc="Control de sumas" data-badge="bctrl">
+        <h2 class="cond">Control de sumas</h2>
+        <p class="lead">Marque cada casilla cuando la planilla de ese votante cuadre.</p>
+        <div class="tbl"><table class="grid-ctrl">
+          <thead><tr><th>Votante</th><th>P1 = 10</th><th>P2 = 6</th><th>F = 15</th><th>D = 15</th><th>O = 10</th><th>A = 28</th></tr></thead>
+          <tbody id="tctrl"></tbody></table></div>
+      </section>
+
+      <section id="s-errores" data-toc="Errores comunes">
+        <h2 class="cond">Errores comunes</h2>
+        <div class="tbl"><table>
+          <thead><tr><th>Error</th><th>Cómo se ve</th><th>Qué hacer</th></tr></thead>
+          <tbody>
+            <tr><td>Repite un puntaje</td><td>Dos elementos con 4 puntos</td><td>Devolver la planilla para corregir</td></tr>
+            <tr><td>La suma no cuadra</td><td>No da 15, 10 o 28</td><td>Devolver la planilla para corregir</td></tr>
+            <tr><td>Marcas incompletas</td><td>P1 sin 10 o P2 sin 6</td><td>Devolver la planilla para corregir</td></tr>
+            <tr><td>Voto de Gabriela duplicado a mano</td><td>8, 6, 4 o 10 en la columna T</td><td>Escribir sus puntos normales</td></tr>
+            <tr><td>Celdas vacías en 4.1 o 4.2</td><td>El Pareto no cuenta esas filas</td><td>Escribir 0</td></tr>
+            <tr><td>Control votos dice REVISAR</td><td>Una columna no suma lo esperado</td><td>Revisar contra la hoja de conteo</td></tr>
+          </tbody></table></div>
+      </section>
+
+      <section id="s-acta" data-toc="Acta de la reunión">
+        <h2 class="cond">Acta de la reunión</h2>
+        <p class="lead">El acta firmada es la evidencia para el auditor. El formato completo está en la <a class="doclink" href="https://claude.ai/code/artifact/cfc8afa5-3471-43bd-baa1-c66bb8232a9f" target="_blank" rel="noopener">Guía de la secretaria</a>.</p>
+        <div class="panel"><ul class="check">
+          <li><input type="checkbox" id="ac1"><label for="ac1">Fecha, lugar, facilitadora y secretaria</label></li>
+          <li><input type="checkbox" id="ac2"><label for="ac2">Asistentes y votantes con firma</label></li>
+          <li><input type="checkbox" id="ac3"><label for="ac3">Decisiones previas: top 5, 5, 4 y 7; voto ×2 de la Presidencia; D2 y A13</label></li>
+          <li><input type="checkbox" id="ac4"><label for="ac4">Resultados: Pareto de 4.1 y 4.2 y top 3 por cuadrante</label></li>
+          <li><input type="checkbox" id="ac5"><label for="ac5">Próximos pasos: matriz 6.1, objetivos de calidad (D11) y Excel aprobado</label></li>
+        </ul></div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<footer>Uso exclusivo y confidencial de TECKNOLOGISTIC S.A. Prohibida su reproducción o distribución a terceros sin autorización previa.</footer>
+
+<script>
+const DATA = {"p41": ["Cumplimiento de leyes y normativas aplicables al servicio", "Autorizaciones y permisos para el transporte y manejo de diésel", "Vigencia del contrato con SHAYA (3 años, no exclusivo, sin volumen comprometido)", "KPI de calidad y ejecución con multas", "Garantías, seguros y cláusula penal", "Causales de terminación del contrato", "Exigencias HSSE&SR de SHAYA (TRIF = 0, AARm = 0)", "Riesgo de accidentes vehiculares y derrames en el transporte", "Condiciones del entorno amazónico (bloqueos, conflictos, clima)", "Dependencia de Primax para asignar cantidad y terminal de carga", "Facturación del servicio a SHAYA (una factura por OC)", "Tarifas del Anexo C y presión sobre los márgenes", "Condiciones de trabajo exigidas por SHAYA", "Monitoreo remoto exigido (GPS, telemetría, tickets)", "Programa de sostenibilidad exigido por SHAYA", "Requisitos de competencia de conductores", "Dotación del servicio: tanquero 7 días con turnos rotativos", "Sin flota propia: el transporte lo ejecuta TNO", "El contrato exige un programa de calidad conforme a ISO 9001", "Conservación de registros por 5 años y auditorías de SHAYA", "Sistema de gestión HSE alineado con el Anexo D", "Control de calidad y trazabilidad del combustible", "Operación sin accidentes de seguridad y ambiente", "Paros de la comunidad dentro del Bloque 61", "SGI de HSE con incorporación de Calidad en implementación", "Equipo de trabajo sólido", "Mayor difusión de información desde Gerencia", "Fortalecimiento de la seguridad en las operaciones", "Contratistas con buenos estándares de seguridad y ambiente", "No existen objetivos de calidad medibles", "Certificación ISO 9001, 14001 y 45001 aún en proceso", "Inestabilidad social", "Mejorar la comunicación con campo", "Alta demanda de suministro técnico en minería y petróleo", "Posibilidad de diversificar clientes hacia otras industrias", "Contacto directo con fabricantes y distribuidores autorizados", "Porcentaje de No Quote", "Cumplimiento del tiempo para presentar ofertas", "Cumplimiento de metas de cierre mensual", "Seguimiento a propuestas y clientes", "Traspaso de información de Ventas a Compras", "Competencia de intermediarios y distribuidores", "Volatilidad de precios, tipo de cambio y aranceles", "Conocimiento técnico del personal sobre productos especializados", "Exigencias de clientes mineros y petroleros (certificados, trazabilidad)", "Revisión de las OC de Kunturi contra la orden de venta", "Seguimiento a proveedores y envíos", "Retrasos de proveedores, importación y aduana", "Riesgo de productos no conformes o no originales", "Verificación del material recibido", "Coordinación de la entrega y confirmación de recepción", "Envío de documentación a Contabilidad externa", "Requisitos aduaneros y control de exportaciones", "Dependencia de pocos fabricantes clave", "Penalizaciones por incumplir fechas ofrecidas", "Compras internacionales a nombre de Kunturi", "Traspaso de requisitos de la orden de venta a la OC", "Aprobación de fabricantes y distribuidores por TCK", "Dependencia de Siati, que verifica solo cuando se le paga", "Embarques de otros orígenes con DHL o UPS", "TCK figura siempre como importador", "Costos de importación no previstos", "Calibración de tanquero, medidores y bomba", "Contabilidad a cargo de una empresa externa", "Aprobación de pagos según el monto de la OC"], "p42": ["SHAYA – cliente del servicio de manejo integral de combustible", "SHAYA – Gerencia HSSE&SR", "SHAYA – Compras, Cuentas por Pagar y Contratos", "SHAYA – relación contractual a largo plazo", "Usuarios en campo (taladros, workover, logística de SHAYA)", "Primax – comercializadora del combustible", "Terminales de Petroecuador", "TNO – transportista contratado", "ARCH / ARCERNNR", "Autoridad Ambiental Nacional", "Ministerio del Trabajo e IESS", "Agencia Nacional de Tránsito", "Servicio de Rentas Internas (SRI)", "GAD municipal y Cuerpo de Bomberos", "Comunidades del área del Bloque 61", "Aseguradoras y emisora de la garantía", "Organismo de certificación ISO", "Clientes de suministro técnico – calidad de la oferta", "Clientes de suministro técnico – cumplimiento de entrega", "Clientes de suministro técnico – relación de largo plazo", "Fabricantes y distribuidores autorizados internacionales", "DHL, UPS, agentes de carga y de aduana", "SENAE y entidades de control previo", "Autoridades de control de exportaciones del país de origen", "Bancos e instituciones financieras", "Accionistas y Gerencia General", "Personal operativo de Combustibles", "Personal operativo de Combustibles – seguridad", "Personal de Ventas", "Personal de Compras", "Empresa externa de contabilidad", "Responsable del SGI y Comité de gestión", "Personal administrativo y de campo", "Kunturi", "Siati – operador logístico en Miami", "Laboratorios de calibración y certificación"], "F": ["Sistema de gestión HSE operativo y alineado con el Anexo D de SHAYA", "Control de calidad y trazabilidad del diésel en cada despacho", "Dirección comprometida con el crecimiento y la certificación ISO 9001", "Equipo de trabajo sólido, competente y con entrenamientos al día", "Acceso directo a fabricantes y distribuidores autorizados", "Ofertas claras y completas dentro del tiempo del cliente", "Seguimiento sistemático a propuestas y clientes", "Revisión de la OC contra la orden de venta y aprobación de pagos", "Seguimiento activo a proveedores y envíos", "Control de recepción del material y seguimiento de la entrega"], "D": ["Dependencia de pocos conductores calificados", "Sin flota propia: el servicio depende de TNO", "SGI aún sin certificar y con brechas en la información documentada", "Comunicación interna insuficiente entre Gerencia, oficina y campo", "Porcentaje de No Quote sin indicador ni análisis de causas", "Variabilidad en el cumplimiento de metas de cierre mensual", "Errores en el traspaso de información entre Ventas, Compras y Contabilidad", "Conocimiento técnico limitado sobre productos especializados", "Dependencia de pocos fabricantes para ciertas líneas", "Compra internacional sin procedimiento y sin acuerdo con Siati", "No existen objetivos de calidad medibles"], "O": ["Tecnologías de monitoreo (GPS, telemetría, tickets digitales)", "Programa de sostenibilidad de SHAYA como diferenciador", "Contratistas con buenos estándares de seguridad, ambiente y salud", "Alta demanda de suministro técnico y diversificación de clientes", "Exigencias de clientes mineros y petroleros como diferenciador", "Renovación o ampliación del contrato con SHAYA", "La certificación ISO 9001 abre licitaciones del sector", "Acuerdos de distribución o representación con fabricantes"], "A": ["Requisitos legales y regulatorios exigentes", "Condiciones del contrato con SHAYA (KPI, multas, terminación)", "Accidentes viales, derrames e incidentes en el transporte", "Paros comunitarios, bloqueos e inestabilidad social", "Dependencia de Primax y de los terminales de Petroecuador", "Condiciones estrictas de facturación y tarifas que presionan el margen", "Exigencias de condiciones de trabajo de SHAYA y de la autoridad laboral", "Competencia de intermediarios, distribuidores y fabricantes", "Volatilidad de precios, tipo de cambio, aranceles y costos de importación", "Retrasos de proveedores, importación y aduana", "Productos no conformes o no originales", "Requisitos aduaneros y controles de exportación", "Incumplimiento de requisitos por parte de TNO", "Dependencia de operadores externos para comprar e importar", "Facturación y cobro a cargo de la empresa externa de contabilidad"]};
+const QUADS = [
+  {k:'F', name:'Fortalezas', n:5},
+  {k:'D', name:'Debilidades', n:5},
+  {k:'O', name:'Oportunidades', n:4},
+  {k:'A', name:'Amenazas', n:7},
+];
+const KEY = 'tck-votacion-v1';
+let state = {votante:'', fecha:'', p41:[], p42:[], foda:{F:{},D:{},O:{},A:{}}, checks:{}};
+try { const s = localStorage.getItem(KEY); if (s) state = Object.assign(state, JSON.parse(s)); } catch(e) {}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} }
+
+const $ = (s, r=document) => r.querySelector(s);
+const esc = t => t.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- Planillas 1 y 2 ---------- */
+function buildMarks(tbodyId, list, key, prefix){
+  $('#'+tbodyId).innerHTML = list.map((t,i) => {
+    const id = i+1;
+    return `<tr data-id="${id}"><td class="id">${id}</td><td><label for="${prefix}${id}">${esc(t)}</label></td><td class="pick"><input type="checkbox" id="${prefix}${id}" data-key="${key}" value="${id}"></td></tr>`;
+  }).join('');
+}
+buildMarks('t41', DATA.p41, 'p41', 'q');
+buildMarks('t42', DATA.p42, 'p42', 'pi');
+
+/* ---------- FODA ---------- */
+$('#foda').innerHTML = QUADS.map(q => {
+  const pts = Array.from({length:q.n}, (_,i) => q.n - i);
+  const sum = q.n*(q.n+1)/2;
+  const rows = DATA[q.k].map((t,i) => {
+    const id = q.k + (i+1);
+    const opts = '<option value="">—</option>' + pts.map(p => `<option value="${p}">${p}</option>`).join('');
+    return `<tr data-q="${q.k}" data-id="${id}"><td class="id">${id}</td><td><label for="s-${id}">${esc(t)}</label></td><td class="pick"><select id="s-${id}" data-q="${q.k}" data-id="${id}">${opts}</select></td></tr>`;
+  }).join('');
+  return `<div id="p-foda-${q.k}" data-toc="${q.name} · Top ${q.n}" data-sub="1" data-badge="bf${q.k}">
+    <h3 class="cond">${q.name} · Top ${q.n}</h3>
+    <p class="lead">Reparta ${pts.join(', ')} (suma ${sum}).</p>
+    <div class="counter" id="cf${q.k}"><span class="msg" id="mf${q.k}">Puntos asignados</span><span class="num">0 de ${sum}</span></div>
+    <div class="tbl"><table><thead><tr><th>ID</th><th>${q.name.slice(0,-1).replace(/e$/,'')}</th><th style="text-align:center">Puntos</th></tr></thead><tbody>${rows}</tbody></table></div>
+  </div>`;
+}).join('');
+// encabezado de columna legible
+document.querySelectorAll('#foda thead th:nth-child(2)').forEach((th,i)=>{ th.textContent = ['Fortaleza','Debilidad','Oportunidad','Amenaza'][i]; });
+
+/* ---------- Control de sumas (secretaria) ---------- */
+const VOT = ['Gabriela Novillo','Jorge Montalvo','Paulina León','Bethzabet Quijano','Katheryne Mena'];
+$('#tctrl').innerHTML = VOT.map((v,r) => `<tr><td>${v}</td>${[0,1,2,3,4,5].map(c => `<td class="pick"><input type="checkbox" id="ctl-${r}-${c}" aria-label="${v}, control ${c+1}"></td>`).join('')}</tr>`).join('');
+
+/* ---------- Restaurar estado ---------- */
+$('#votante').value = state.votante || '';
+$('#fecha').value = state.fecha || '';
+state.p41.forEach(id => { const el = $('#q'+id); if (el) el.checked = true; });
+state.p42.forEach(id => { const el = $('#pi'+id); if (el) el.checked = true; });
+QUADS.forEach(q => Object.entries(state.foda[q.k]||{}).forEach(([id,v]) => { const el = $('#s-'+id); if (el) el.value = v; }));
+Object.entries(state.checks).forEach(([id,v]) => { const el = document.getElementById(id); if (el) el.checked = v; });
+
+/* ---------- Validación ---------- */
+const badges = {};
+function setCounter(el, text, ok, bad){
+  el.querySelector('.num').textContent = text;
+  el.classList.toggle('ok', ok); el.classList.toggle('bad', bad);
+}
+function validate(){
+  // Planillas 1 y 2
+  [['p41','#t41','#c41',10,'b41'],['p42','#t42','#c42',6,'b42']].forEach(([key,tb,ct,need,b]) => {
+    const ids = [...document.querySelectorAll(tb+' input:checked')].map(x => +x.value);
+    state[key] = ids;
+    document.querySelectorAll(tb+' tr').forEach(tr => tr.classList.toggle('on', ids.includes(+tr.dataset.id)));
+    const n = ids.length;
+    setCounter($(ct), `${n} de ${need}`, n===need, n>need);
+    $(ct+' .msg').textContent = n>need ? `Sobran ${n-need}: desmarque alguna` : n<need ? `Faltan ${need-n}` : 'Completa';
+    badges[b] = {text:`${n}/${need}`, ok:n===need, bad:n>need};
+  });
+  // FODA
+  QUADS.forEach(q => {
+    const sels = [...document.querySelectorAll(`select[data-q="${q.k}"]`)];
+    const vals = {}; state.foda[q.k] = {};
+    sels.forEach(s => { if (s.value){ vals[s.value] = (vals[s.value]||0)+1; state.foda[q.k][s.dataset.id] = s.value; } });
+    let sum = 0, dup = false;
+    sels.forEach(s => {
+      const isDup = s.value && vals[s.value] > 1; if (isDup) dup = true;
+      if (s.value) sum += +s.value;
+      s.closest('tr').classList.toggle('dup', !!isDup);
+      s.closest('tr').classList.toggle('on', !!s.value && !isDup);
+    });
+    const need = q.n*(q.n+1)/2;
+    const ok = sum===need && !dup;
+    setCounter($('#cf'+q.k), `${sum} de ${need}`, ok, dup || sum>need);
+    $('#mf'+q.k).textContent = dup ? 'Hay puntajes repetidos' : sum<need ? `Faltan ${need-sum} puntos` : sum>need ? 'Se pasó del total' : 'Completo';
+    badges['bf'+q.k] = {text:`${sum}/${need}`, ok, bad:dup||sum>need};
+  });
+  // Control secretaria
+  const tot = 30, done = document.querySelectorAll('#tctrl input:checked').length;
+  badges.bctrl = {text:`${done}/${tot}`, ok:done===tot, bad:false};
+  state.votante = $('#votante').value; state.fecha = $('#fecha').value;
+  renderSummary(); paintBadges(); save();
+}
+function renderSummary(){
+  const top = k => Object.entries(state.foda[k]||{}).sort((a,b)=>b[1]-a[1]).map(([id,v]) => `${id} (${v})`).join(', ') || 'Sin asignar';
+  const box = (t,v) => `<div class="panel"><h4>${t}</h4><p>${v}</p></div>`;
+  $('#summary').innerHTML =
+    box('Votante', esc(state.votante || 'Sin elegir') + (state.fecha ? ' · ' + state.fecha : '')) +
+    box('Planilla 1 · cuestiones', state.p41.length ? state.p41.slice().sort((a,b)=>a-b).join(', ') : 'Sin marcar') +
+    box('Planilla 2 · partes interesadas', state.p42.length ? state.p42.slice().sort((a,b)=>a-b).join(', ') : 'Sin marcar') +
+    QUADS.map(q => box(q.name, top(q.k))).join('');
+}
+
+/* ---------- Índice interactivo ---------- */
+let current = 'p';
+function buildToc(){
+  const root = current==='p' ? $('#doc-p') : $('#doc-s');
+  const items = [...root.querySelectorAll('[data-toc]')];
+  $('#toc-list').innerHTML = items.map(el => {
+    const b = el.dataset.badge ? `<span class="badge" data-b="${el.dataset.badge}"></span>` : '';
+    return `<li class="${el.dataset.sub?'sub':''}"><a href="#${el.id}" data-target="${el.id}"><span>${el.dataset.toc}</span>${b}</a></li>`;
+  }).join('');
+  $('#toc-note').textContent = current==='p' ? 'El índice se pone en verde cuando cada parte está completa.' : 'Use las casillas para llevar el control durante la reunión.';
+  paintBadges(); observe(items);
+}
+function paintBadges(){
+  document.querySelectorAll('.badge[data-b]').forEach(el => {
+    const b = badges[el.dataset.b]; if (!b) return;
+    el.textContent = b.text; el.classList.toggle('ok', b.ok); el.classList.toggle('bad', b.bad);
+  });
+}
+let obs;
+function observe(items){
+  if (obs) obs.disconnect();
+  if (!('IntersectionObserver' in window)) return;
+  obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting){
+        document.querySelectorAll('#toc-list a').forEach(a => a.classList.toggle('active', a.dataset.target===e.target.id));
+      }
+    });
+  }, {rootMargin:'-80px 0px -65% 0px'});
+  items.forEach(el => obs.observe(el));
+}
+function selectTab(t){
+  current = t;
+  $('#tab-p').setAttribute('aria-selected', t==='p'); $('#tab-s').setAttribute('aria-selected', t==='s');
+  $('#doc-p').hidden = t!=='p'; $('#doc-s').hidden = t!=='s';
+  $('#btn-clear').textContent = t==='p' ? 'Limpiar planilla' : 'Limpiar casillas';
+  buildToc(); window.scrollTo({top:0});
+}
+$('#tab-p').onclick = () => selectTab('p');
+$('#tab-s').onclick = () => selectTab('s');
+$('#btn-print').onclick = () => window.print();
+$('#btn-clear').onclick = () => {
+  if (!confirm(current==='p' ? '¿Borrar todas las marcas y puntos de esta planilla?' : '¿Desmarcar todas las casillas de la secretaria?')) return;
+  if (current==='p'){
+    document.querySelectorAll('#doc-p input[type=checkbox]').forEach(x => x.checked=false);
+    document.querySelectorAll('#doc-p select').forEach(x => { if (x.id!=='votante') x.value=''; });
+  } else {
+    document.querySelectorAll('#doc-s input[type=checkbox]').forEach(x => { x.checked=false; delete state.checks[x.id]; });
+  }
+  validate();
+};
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.matches('#doc-s input[type=checkbox]')) state.checks[t.id] = t.checked;
+  validate();
+});
+validate(); buildToc();
+</script>
+</body>
+</html>
